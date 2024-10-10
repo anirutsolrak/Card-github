@@ -43,6 +43,16 @@ function App() {
     setIsDarkMode(!isDarkMode);
   };
 
+    const fetchUserData = async (username) => {
+    try {
+      const response = await axios.get(`https://api.github.com/users/${username}`);
+      setUserData(response.data);
+    } catch (error) {
+      console.error('Error fetching shared user data:', error);
+    }
+  };
+
+
   return (
     <ThemeProvider theme={isDarkMode ? darkTheme : lightTheme}>
       <CssBaseline />

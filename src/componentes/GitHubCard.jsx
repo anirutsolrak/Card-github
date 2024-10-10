@@ -12,20 +12,17 @@ import {
   Divider,
 } from '@mui/material';
 import { useSpring, animated, useTransition } from 'react-spring';
-import {
-  Github,
-  Linkedin,
-  MapPin,
-  Book,
-  Users,
-  UserPlus,
-  Business,
-  Email,
-  Language,
-  LocationOn,
-  Star,
-  Code,
-} from '@mui/icons-material';
+import BusinessIcon from '@mui/icons-material/Business';
+import EmailIcon from '@mui/icons-material/Email';
+import LanguageIcon from '@mui/icons-material/Language';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
+import StarIcon from '@mui/icons-material/Star';
+import CodeIcon from '@mui/icons-material/Code';
+import GitHubIcon from '@mui/icons-material/GitHub';
+import LinkedInIcon from '@mui/icons-material/LinkedIn';
+import BookIcon from '@mui/icons-material/Book';
+import PeopleIcon from '@mui/icons-material/People';
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import axios from 'axios';
 
 const GitHubCard = ({ userData }) => {
@@ -117,7 +114,7 @@ const GitHubCard = ({ userData }) => {
                           color="text.secondary"
                           className="flex items-center"
                         >
-                          <Business fontSize="small" className="mr-2" />
+                          <BusinessIcon fontSize="small" className="mr-2" /> 
                           {userData.company}
                         </Typography>
                       </Grid>
@@ -129,7 +126,7 @@ const GitHubCard = ({ userData }) => {
                           color="text.secondary"
                           className="flex items-center"
                         >
-                          <Email fontSize="small" className="mr-2" />
+                          <EmailIcon fontSize="small" className="mr-2" /> 
                           {userData.email}
                         </Typography>
                       </Grid>
@@ -141,7 +138,7 @@ const GitHubCard = ({ userData }) => {
                           color="text.secondary"
                           className="flex items-center"
                         >
-                          <Language fontSize="small" className="mr-2" />
+                          <LanguageIcon fontSize="small" className="mr-2" /> 
                           <Link
                             href={userData.blog}
                             target="_blank"
@@ -159,7 +156,7 @@ const GitHubCard = ({ userData }) => {
                           color="text.secondary"
                           className="flex items-center"
                         >
-                          <LocationOn fontSize="small" className="mr-2" />
+                          <LocationOnIcon fontSize="small" className="mr-2" /> 
                           {userData.location}
                         </Typography>
                       </Grid>
@@ -167,7 +164,7 @@ const GitHubCard = ({ userData }) => {
                     {userData.public_repos > 0 && (
                       <Grid item xs={12} md={4}>
                         <Chip
-                          icon={<Book fontSize="small" />}
+                          icon={<BookIcon fontSize="small" />}
                           label={`${userData.public_repos} Repositórios`}
                           variant="outlined"
                           className="w-full"
@@ -177,7 +174,7 @@ const GitHubCard = ({ userData }) => {
                     {userData.followers > 0 && (
                       <Grid item xs={12} md={4}>
                         <Chip
-                          icon={<Users fontSize="small" />}
+                          icon={<PeopleIcon fontSize="small" />}
                           label={`${userData.followers} Seguidores`}
                           variant="outlined"
                           className="w-full"
@@ -187,7 +184,7 @@ const GitHubCard = ({ userData }) => {
                     {userData.following > 0 && (
                       <Grid item xs={12} md={4}>
                         <Chip
-                          icon={<UserPlus fontSize="small" />}
+                          icon={<PersonAddIcon fontSize="small" />}
                           label={`${userData.following} Seguindo`}
                           variant="outlined"
                           className="w-full"
@@ -201,7 +198,7 @@ const GitHubCard = ({ userData }) => {
                         color="text.secondary"
                         className="flex items-center"
                       >
-                        <Code fontSize="small" className="mr-2" />
+                        <CodeIcon fontSize="small" className="mr-2" />
                         Criado em: {formatDate(userData.created_at)}
                       </Typography>
                     </Grid>
@@ -211,7 +208,7 @@ const GitHubCard = ({ userData }) => {
                         color="text.secondary"
                         className="flex items-center"
                       >
-                        <Star fontSize="small" className="mr-2" />
+                        <StarIcon fontSize="small" className="mr-2" />
                         Atualizado em: {formatDate(userData.updated_at)}
                       </Typography>
                     </Grid>
