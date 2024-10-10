@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { TextField, Button, CircularProgress, Alert } from '@mui/material';
 
-const UserProfileInput = ({ setUserData }) => {
-  const [username, setUsername] = useState('');
+const UserProfileInput = ({ setUserData, setUsername }) => {
+  const [usernameInput, setUsernameInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -13,9 +13,8 @@ const UserProfileInput = ({ setUserData }) => {
     setError(null);
 
     try {
-      const response = await axios.get(
-        `https://api.github.com/users/${username}`
-      );
+      setUsername(usernameInput); // Atualiza o estado username no App
+      const response = await axios.get(`https://api.github.com/users/${usernameInput}`);
       setUserData(response.data);
     } catch (err) {
       if (axios.isAxiosError(err) && err.response?.status === 404) {
@@ -34,8 +33,8 @@ const UserProfileInput = ({ setUserData }) => {
       <TextField
         label="Nome de usuário do GitHub"
         variant="outlined"
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
+        value={usernameInput}
+        onChange={(e) => setUsernameInput(e.target.value)}
         className="mb-2"
       />
       <Button

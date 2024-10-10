@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ThemeProvider, createTheme, CssBaseline } from '@mui/material';
 import UserProfileInput from './componentes/UserProfileInput';
 import GitHubCard from './componentes/GitHubCard';
+import axios from 'axios';
 
 const darkTheme = createTheme({
   palette: {
@@ -38,20 +39,27 @@ const lightTheme = createTheme({
 function App() {
   const [userData, setUserData] = useState(null);
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [username, setUsername] = useState(''); // Estado para o nome de usuário
 
   const toggleTheme = () => {
     setIsDarkMode(!isDarkMode);
   };
 
-    const fetchUserData = async (username) => {
+  useEffect(() => {
+    if (username) { // Verifica se username está definido
+      fetchUserData(username);
+    }
+  }, [username]); // Executa quando username muda
+
+  const fetchUserData = async (username) => {
     try {
       const response = await axios.get(`https://api.github.com/users/${username}`);
+      console.log("Dados do usuário:", response.data); // Console.log para depuração
       setUserData(response.data);
     } catch (error) {
       console.error('Error fetching shared user data:', error);
     }
   };
-
 
   return (
     <ThemeProvider theme={isDarkMode ? darkTheme : lightTheme}>
@@ -63,7 +71,8 @@ function App() {
         >
           Toggle Theme
         </button>
-        <UserProfileInput setUserData={setUserData} />
+        {/* Passando a função setUsername para UserProfileInput */}
+        <UserProfileInput setUserData={setUserData} setUsername={setUsername} /> 
         {userData && <GitHubCard userData={userData} />}
       </div>
     </ThemeProvider>
