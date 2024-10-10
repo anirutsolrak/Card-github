@@ -17,7 +17,6 @@ const UserProfileInput = ({ setUserData }) => {
         `https://api.github.com/users/${username}`
       );
       setUserData(response.data);
-      console.log("Dados do usuário carregados:", response.data); // Log para debug
     } catch (err) {
       if (axios.isAxiosError(err) && err.response?.status === 404) {
         setError('Usuário não encontrado');
@@ -25,7 +24,6 @@ const UserProfileInput = ({ setUserData }) => {
         setError('Erro ao buscar dados do usuário');
       }
       setUserData(null);
-      console.error("Erro ao buscar dados:", err); // Log para debug
     } finally {
       setLoading(false);
     }

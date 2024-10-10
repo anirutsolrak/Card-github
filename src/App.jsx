@@ -1,10 +1,39 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { ThemeProvider, createTheme, CssBaseline } from '@mui/material';
 import UserProfileInput from './componentes/UserProfileInput';
 import GitHubCard from './componentes/GitHubCard';
-import axios from 'axios';
 
-// ... (temas existentes)
+const darkTheme = createTheme({
+  palette: {
+    mode: 'dark',
+    primary: {
+      main: '#002233',
+    },
+    secondary: {
+      main: '#FF5555',
+    },
+    background: {
+      default: '#000000',
+      paper: '#001122',
+    },
+  },
+});
+
+const lightTheme = createTheme({
+  palette: {
+    mode: 'light',
+    primary: {
+      main: '#800080',
+    },
+    secondary: {
+      main: '#FFC0CB',
+    },
+    background: {
+      default: '#FFFFFF',
+      paper: '#F0F0F0',
+    },
+  },
+});
 
 function App() {
   const [userData, setUserData] = useState(null);
@@ -12,29 +41,6 @@ function App() {
 
   const toggleTheme = () => {
     setIsDarkMode(!isDarkMode);
-  };
-
-  useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const sharedData = urlParams.get('data');
-
-    if (sharedData) {
-      try {
-        const { username } = JSON.parse(decodeURIComponent(sharedData));
-        fetchUserData(username);
-      } catch (error) {
-        console.error('Error parsing shared data:', error);
-      }
-    }
-  }, []);
-
-  const fetchUserData = async (username) => {
-    try {
-      const response = await axios.get(`https://api.github.com/users/${username}`);
-      setUserData(response.data);
-    } catch (error) {
-      console.error('Error fetching shared user data:', error);
-    }
   };
 
   return (
