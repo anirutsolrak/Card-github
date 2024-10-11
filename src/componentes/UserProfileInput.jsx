@@ -13,7 +13,7 @@ const UserProfileInput = ({ setUserData, setUsername }) => {
     setError(null);
 
     try {
-      setUsername(usernameInput); // Atualiza o estado username no App
+      setUsername(usernameInput);
       const response = await axios.get(`https://api.github.com/users/${usernameInput}`);
       setUserData(response.data);
     } catch (err) {

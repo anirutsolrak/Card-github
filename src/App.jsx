@@ -39,22 +39,22 @@ const lightTheme = createTheme({
 function App() {
   const [userData, setUserData] = useState(null);
   const [isDarkMode, setIsDarkMode] = useState(false);
-  const [username, setUsername] = useState(''); // Estado para o nome de usuário
+  const [username, setUsername] = useState('');
 
   const toggleTheme = () => {
     setIsDarkMode(!isDarkMode);
   };
 
   useEffect(() => {
-    if (username) { // Verifica se username está definido
+    if (username) {
       fetchUserData(username);
     }
-  }, [username]); // Executa quando username muda
+  }, [username]);
 
   const fetchUserData = async (username) => {
     try {
       const response = await axios.get(`https://api.github.com/users/${username}`);
-      console.log("Dados do usuário:", response.data); // Console.log para depuração
+      console.log("Dados do usuário:", response.data);
       setUserData(response.data);
     } catch (error) {
       console.error('Error fetching shared user data:', error);
@@ -71,8 +71,7 @@ function App() {
         >
           Toggle Theme
         </button>
-        {/* Passando a função setUsername para UserProfileInput */}
-        <UserProfileInput setUserData={setUserData} setUsername={setUsername} /> 
+        <UserProfileInput setUserData={setUserData} setUsername={setUsername} />
         {userData && <GitHubCard userData={userData} />}
       </div>
     </ThemeProvider>
