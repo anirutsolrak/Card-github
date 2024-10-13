@@ -1,81 +1,112 @@
-import React, { useState, useEffect } from 'react';
-import { ThemeProvider, createTheme, CssBaseline } from '@mui/material';
-import UserProfileInput from './componentes/UserProfileInput';
-import GitHubCard from './componentes/GitHubCard';
+import { useState } from 'react';
 import axios from 'axios';
+import styled from 'styled-components';
+import { Button, CircularProgress, Alert } from '@mui/material';
+import EmailIcon from '@mui/icons-material/Email';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
 
-const darkTheme = createTheme({
-  palette: {
-    mode: 'dark',
-    primary: {
-      main: '#002233',
-    },
-    secondary: {
-      main: '#FF5555',
-    },
-    background: {
-      default: '#000000',
-      paper: '#001122',
-    },
-  },
-});
-
-const lightTheme = createTheme({
-  palette: {
-    mode: 'light',
-    primary: {
-      main: '#800080',
-    },
-    secondary: {
-      main: '#FFC0CB',
-    },
-    background: {
-      default: '#FFFFFF',
-      paper: '#F0F0F0',
-    },
-  },
-});
-
-function App() {
-  const [userData, setUserData] = useState(null);
-  const [isDarkMode, setIsDarkMode] = useState(false);
+export default function App() {
   const [username, setUsername] = useState('');
+  const [userData, setUserData] = useState(null);
+  const [error, setError] = useState(null)
 
-  const toggleTheme = () => {
-    setIsDarkMode(!isDarkMode);
-  };
+  const fetchUserData = async (e) => {
 
-  useEffect(() => {
-    if (username) {
-      fetchUserData(username);
-    }
-  }, [username]);
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
 
-  const fetchUserData = async (username) => {
+    setLoading(true)
     try {
       const response = await axios.get(`https://api.github.com/users/${username}`);
-      console.log("Dados do usuário:", response.data);
       setUserData(response.data);
-    } catch (error) {
-      console.error('Error fetching shared user data:', error);
+    } catch (err) {
+      if (axios.isAxiosError(err) && err.response?.status === 404) {
+        setError('Usuário não encontrado');
+      } else {
+        setError('Erro ao buscar dados do usuário');
+      }
+      setUserData(null);
+    } finally {
+      setLoading(false)
     }
   };
 
+  const [loading, setLoading] = useState(false);
+
   return (
-    <ThemeProvider theme={isDarkMode ? darkTheme : lightTheme}>
-      <CssBaseline />
-      <div className="min-h-screen flex flex-col items-center justify-center p-4">
-        <button
-          onClick={toggleTheme}
-          className="mb-4 px-4 py-2 rounded bg-gray-200 dark:bg-gray-700"
-        >
-          Toggle Theme
-        </button>
-        <UserProfileInput setUserData={setUserData} setUsername={setUsername} />
-        {userData && <GitHubCard userData={userData} />}
-      </div>
-    </ThemeProvider>
+    <Container>
+
+      <Input
+        type="text"
+        value={username}
+        onChange={(e) => setUsername(e.target.value)}
+        placeholder="Enter GitHub username"
+      />
+
+      <Button 
+        onClick={fetchUserData}
+        type="submit"
+        variant="contained"
+        color="primary"
+        disabled={loading}
+        > {loading ? <CircularProgress size={24}/> : 'Buscar perfil'}
+      </Button>
+
+      {error && (
+        <Alert severity="error" className="mt-2">
+          {error}
+        </Alert>
+      )}
+
+      {userData && (
+        <Card>
+          <Avatar src={userData.avatar_url} alt={userData.name} />
+          <h2>{userData.name}</h2>
+          <p>{userData.bio}</p>
+          <p>Followers: {userData.followers}</p>
+          <p>Following: {userData.following}</p>
+          <p>localização: {userData.location}</p>
+          <EmailIcon fontSize="small" className="mr-2" />
+          email: {userData.email}
+
+          <LocationOnIcon fontSize="small" className="mr-2" />
+          {userData.location}
+        </Card>
+      )}
+    </Container>
   );
 }
 
-export default App;
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  border: 2px solid white;
+  height: 100svh;
+  gap: 20px;
+  @media screen and (min-width: 638px)
+  {
+    width: 50%;  
+  }
+`
+
+const Input = styled.input`
+  padding: 5px;
+`
+
+const Card = styled.div`
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 20px;
+  margin-top: 20px;
+  text-align: center;
+  color: white;
+`
+
+const Avatar = styled.img`
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+`
