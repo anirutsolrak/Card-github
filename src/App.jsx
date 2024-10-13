@@ -11,25 +11,27 @@ export default function App() {
   const [error, setError] = useState(null)
 
   const fetchUserData = async (e) => {
-
     e.preventDefault();
     setLoading(true);
     setError(null);
-
     setLoading(true)
-    try {
+
+    try
+    {
       const response = await axios.get(`https://api.github.com/users/${username}`);
       setUserData(response.data);
-    } catch (err) {
+    }
+
+    catch (err)
+    {
       if (axios.isAxiosError(err) && err.response?.status === 404) {
         setError('Usuário não encontrado');
       } else {
         setError('Erro ao buscar dados do usuário');
       }
       setUserData(null);
-    } finally {
-      setLoading(false)
     }
+    finally {setLoading(false)}
   };
 
   const [loading, setLoading] = useState(false);
@@ -86,9 +88,11 @@ const Container = styled.div`
   border: 2px solid white;
   height: 100svh;
   gap: 20px;
+  color: #FFFFFF;
+
   @media screen and (min-width: 638px)
   {
-    width: 50%;  
+    min-width: 60%;
   }
 `
 
@@ -102,7 +106,6 @@ const Card = styled.div`
   padding: 20px;
   margin-top: 20px;
   text-align: center;
-  color: white;
 `
 
 const Avatar = styled.img`
