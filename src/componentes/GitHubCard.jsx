@@ -8,11 +8,11 @@ import {
   Chip,
   CircularProgress,
   Alert,
-  Grid,
+  Grid2,
   Divider,
   Button,
 } from '@mui/material';
-import { useSpring, animated, useTransition } from 'react-spring';
+import { useSpring, animated } from 'react-spring'; // Remova useTransition
 import BusinessIcon from '@mui/icons-material/Business';
 import EmailIcon from '@mui/icons-material/Email';
 import LanguageIcon from '@mui/icons-material/Language';
@@ -26,6 +26,43 @@ import SaveIcon from '@mui/icons-material/Save';
 import axios from 'axios';
 import html2canvas from 'html2canvas';
 import { saveAs } from 'file-saver';
+import styled from 'styled-components';
+
+
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  border: 2px solid white;
+  height: 100svh;
+  gap: 20px;
+  color: #FFFFFF;
+
+  @media screen and (min-width: 638px) {
+    min-width: 60%;
+  }
+`;
+
+const Input = styled.input`
+  padding: 5px;
+`;
+
+const StyledCard = styled(Card)`
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 20px;
+  margin-top: 20px;
+  text-align: center;
+`;
+
+const StyledAvatar = styled(Avatar)`
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+`;
+
+
 
 const GitHubCard = ({ userData }) => {
   const [flipped, setFlipped] = useState(false);
@@ -34,13 +71,6 @@ const GitHubCard = ({ userData }) => {
   const [errorRepos, setErrorRepos] = useState(null);
 
   const cardRef = useRef(null);
-
-  const transitions = useTransition(flipped, {
-    from: { opacity: 0, transform: 'rotateY(180deg)' },
-    enter: { opacity: 1, transform: 'rotateY(0deg)' },
-    leave: { opacity: 0, transform: 'rotateY(180deg)' },
-    config: { mass: 1, tension: 280, friction: 60 },
-  });
 
   useEffect(() => {
     const fetchRepos = async () => {
@@ -70,7 +100,7 @@ const GitHubCard = ({ userData }) => {
   };
 
   const saveCard = async () => {
-    if (cardRef.current) { 
+    if (cardRef.current) {
       // 1. Captura a frente do cartão primeiro:
       const frontCanvas = await html2canvas(cardRef.current, { scale: 2 });
 
@@ -105,11 +135,19 @@ const GitHubCard = ({ userData }) => {
   return (
     <div className="relative">
       <div className="cursor-pointer" onClick={() => setFlipped((state) => !state)}>
-        {transitions((style) => (
-          <animated.div ref={cardRef} style={style} className="w-96 h-[400px] relative">
-            <Card className="w-full h-full">
+        <animated.div
+          ref={cardRef}
+          style={{
+            transform: flipped ? 'rotateY(0deg)' : 'rotateY(0deg)',
+            transformOrigin: '50% 50%', // Define o ponto de rotação no centro
+          }}
+          className="w-96 h-[400px] relative transition-transform duration-500 ease-in-out"
+        >
+          <Card className="w-full h-full"> 
+            <CardContent className="flex flex-col p-4">
+              {/* Conteúdo que será renderizado no verso */}
               {flipped ? (
-                <CardContent className="flex flex-col p-4">
+                <div>
                   <Typography variant="h6">Verso do Cartão</Typography>
                   {loadingRepos ? (
                     <CircularProgress />
@@ -132,19 +170,19 @@ const GitHubCard = ({ userData }) => {
                       </ul>
                     </div>
                   )}
-                </CardContent>
-              ) : ( 
-                <CardContent className="flex flex-col p-4">
-                  <Grid container spacing={2} alignItems="center">
-                    <Grid item xs={12} md={3}>
+                </div>
+              ) : ( // Conteúdo que será renderizado na frente
+                <div>
+                  <Grid2 container spacing={2} alignItems="center">
+                    <Grid2 item xs={12} md={3}>
                       <Avatar
                         src={userData.avatar_url}
                         alt={userData.login}
                         className="w-24 h-24"
                         sx={{ width: 100, height: 100 }}
                       />
-                    </Grid>
-                    <Grid item xs={12} md={9}>
+                    </Grid2>
+                    <Grid2 item xs={12} md={9}>
                       <Typography variant="h6" component="div">
                         <Link
                           href={userData.html_url}
@@ -160,14 +198,14 @@ const GitHubCard = ({ userData }) => {
                           {userData.bio}
                         </Typography>
                       )}
-                    </Grid>
-                  </Grid>
+                    </Grid2>
+                  </Grid2>
 
                   <Divider className="my-4" />
 
-                  <Grid container spacing={2}>
+                  <Grid2 container spacing={2}>
                     {userData.company && (
-                      <Grid item xs={12} md={6}>
+                      <Grid2 item xs={12} md={6}>
                         <Typography
                           variant="body2"
                           color="text.secondary"
@@ -176,10 +214,10 @@ const GitHubCard = ({ userData }) => {
                           <BusinessIcon fontSize="small" className="mr-2" />
                           {userData.company}
                         </Typography>
-                      </Grid>
+                      </Grid2>
                     )}
                     {userData.email && (
-                      <Grid item xs={12} md={6}>
+                      <Grid2 item xs={12} md={6}>
                         <Typography
                           variant="body2"
                           color="text.secondary"
@@ -188,10 +226,10 @@ const GitHubCard = ({ userData }) => {
                           <EmailIcon fontSize="small" className="mr-2" />
                           {userData.email}
                         </Typography>
-                      </Grid>
+                      </Grid2>
                     )}
                     {userData.blog && (
-                      <Grid item xs={12} md={6}>
+                      <Grid2 item xs={12} md={6}>
                         <Typography
                           variant="body2"
                           color="text.secondary"
@@ -206,10 +244,10 @@ const GitHubCard = ({ userData }) => {
                             {userData.blog}
                           </Link>
                         </Typography>
-                      </Grid>
+                      </Grid2>
                     )}
                     {userData.location && (
-                      <Grid item xs={12} md={6}>
+                      <Grid2 item xs={12} md={6}>
                         <Typography
                           variant="body2"
                           color="text.secondary"
@@ -218,39 +256,39 @@ const GitHubCard = ({ userData }) => {
                           <LocationOnIcon fontSize="small" className="mr-2" />
                           {userData.location}
                         </Typography>
-                      </Grid>
+                      </Grid2>
                     )}
                     {userData.public_repos > 0 && (
-                      <Grid item xs={12} md={4}>
+                      <Grid2 item xs={12} md={4}>
                         <Chip
                           icon={<BookIcon fontSize="small" />}
                           label={`${userData.public_repos} Repositórios`}
                           variant="outlined"
                           className="w-full"
                         />
-                      </Grid>
+                      </Grid2>
                     )}
                     {userData.followers > 0 && (
-                      <Grid item xs={12} md={4}>
+                      <Grid2 item xs={12} md={4}>
                         <Chip
                           icon={<PeopleIcon fontSize="small" />}
                           label={`${userData.followers} Seguidores`}
                           variant="outlined"
                           className="w-full"
                         />
-                      </Grid>
+                      </Grid2>
                     )}
                     {userData.following > 0 && (
-                      <Grid item xs={12} md={4}>
+                      <Grid2 item xs={12} md={4}>
                         <Chip
                           icon={<PersonAddIcon fontSize="small" />}
                           label={`${userData.following} Seguindo`}
                           variant="outlined"
                           className="w-full"
                         />
-                      </Grid>
+                      </Grid2>
                     )}
-                    <Grid item xs={12} md={6}>
+                    <Grid2 item xs={12} md={6}>
                       <Typography
                         variant="body2"
                         color="text.secondary"
@@ -259,8 +297,8 @@ const GitHubCard = ({ userData }) => {
                         <CodeIcon fontSize="small" className="mr-2" />
                         Criado em: {formatDate(userData.created_at)}
                       </Typography>
-                    </Grid>
-                    <Grid item xs={12} md={6}>
+                    </Grid2>
+                    <Grid2 item xs={12} md={6}>
                       <Typography
                         variant="body2"
                         color="text.secondary"
@@ -269,13 +307,13 @@ const GitHubCard = ({ userData }) => {
                         <StarIcon fontSize="small" className="mr-2" />
                         Atualizado em: {formatDate(userData.updated_at)}
                       </Typography>
-                    </Grid>
-                  </Grid>
-                </CardContent>
-              )} 
-            </Card>
-          </animated.div>
-        ))}
+                    </Grid2>
+                  </Grid2>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </animated.div>
       </div>
       <Button
         variant="contained"
