@@ -11,8 +11,9 @@ import {
   Grid2,
   Divider,
   Button,
+  TextField,
 } from '@mui/material';
-import { useSpring, animated } from 'react-spring'; // Remova useTransition
+import { useSpring, animated } from 'react-spring';
 import BusinessIcon from '@mui/icons-material/Business';
 import EmailIcon from '@mui/icons-material/Email';
 import LanguageIcon from '@mui/icons-material/Language';
@@ -23,12 +24,13 @@ import BookIcon from '@mui/icons-material/Book';
 import PeopleIcon from '@mui/icons-material/People';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import SaveIcon from '@mui/icons-material/Save';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import axios from 'axios';
 import html2canvas from 'html2canvas';
 import { saveAs } from 'file-saver';
 import styled from 'styled-components';
 
-
+// Estilos styled-components
 const Container = styled.div`
   display: flex;
   flex-direction: column;
@@ -62,13 +64,14 @@ const StyledAvatar = styled(Avatar)`
   border-radius: 50%;
 `;
 
-
-
 const GitHubCard = ({ userData }) => {
   const [flipped, setFlipped] = useState(false);
   const [repos, setRepos] = useState([]);
   const [loadingRepos, setLoadingRepos] = useState(false);
   const [errorRepos, setErrorRepos] = useState(null);
+  const [embedCode, setEmbedCode] = useState('');
+  const [copied, setCopied] = useState(false);
+  const [showEmbedCode, setShowEmbedCode] = useState(false);
 
   const cardRef = useRef(null);
 
@@ -132,6 +135,33 @@ const GitHubCard = ({ userData }) => {
     }
   };
 
+  const generateEmbedCode = () => {
+    const cardWidth = 350; // Ajuste a largura do cartão
+    const cardHeight = 400; // Ajuste a altura do cartão
+
+    const embedCode = `<iframe
+      src="${window.location.origin}/" 
+      width="${cardWidth}" 
+      height="${cardHeight}"
+      style="border: none; overflow: hidden;"
+    ></iframe>`;
+
+    setEmbedCode(embedCode);
+  };
+
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(embedCode).then(() => {
+      setCopied(true);
+      setTimeout(() => {
+        setCopied(false);
+      }, 2000);
+    });
+  };
+
+  useEffect(() => {
+    generateEmbedCode(); // Gera o código de embed ao carregar o componente
+  }, []);
+
   return (
     <div className="relative">
       <div className="cursor-pointer" onClick={() => setFlipped((state) => !state)}>
@@ -143,7 +173,7 @@ const GitHubCard = ({ userData }) => {
           }}
           className="w-96 h-[400px] relative transition-transform duration-500 ease-in-out"
         >
-          <Card className="w-full h-full"> 
+          <StyledCard className="w-full h-full">
             <CardContent className="flex flex-col p-4">
               {/* Conteúdo que será renderizado no verso */}
               {flipped ? (
@@ -175,11 +205,10 @@ const GitHubCard = ({ userData }) => {
                 <div>
                   <Grid2 container spacing={2} alignItems="center">
                     <Grid2 item xs={12} md={3}>
-                      <Avatar
+                      <StyledAvatar
                         src={userData.avatar_url}
                         alt={userData.login}
                         className="w-24 h-24"
-                        sx={{ width: 100, height: 100 }}
                       />
                     </Grid2>
                     <Grid2 item xs={12} md={9}>
@@ -312,18 +341,34 @@ const GitHubCard = ({ userData }) => {
                 </div>
               )}
             </CardContent>
-          </Card>
+          </StyledCard>
         </animated.div>
       </div>
-      <Button
-        variant="contained"
-        color="primary"
-        startIcon={<SaveIcon />}
-        onClick={saveCard}
-        className="mt-4"
-      >
-        Salvar Card
-      </Button>
+      <div className="flex gap-2 mt-4">
+        <Button
+          variant="contained"
+          color="primary"
+          startIcon={<SaveIcon />}
+          onClick={saveCard}
+        >
+          Salvar Card
+        </Button>
+        <Button
+          variant="contained"
+          color="secondary"
+          startIcon={<ContentCopyIcon />}
+          onClick={copyToClipboard}
+          disabled={embedCode === ''} // Desabilita se o código não estiver pronto
+        >
+          Copiar Embed
+        </Button>
+      </div>
+
+      {copied && (
+        <Alert severity="success" className="mt-2">
+          Código de embed copiado para a área de transferência!
+        </Alert>
+      )}
     </div>
   );
 };
