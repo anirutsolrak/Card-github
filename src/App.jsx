@@ -1,81 +1,97 @@
-import React, { useState, useEffect } from 'react';
-import { ThemeProvider, createTheme, CssBaseline } from '@mui/material';
-import UserProfileInput from './componentes/UserProfileInput';
-import GitHubCard from './componentes/GitHubCard';
+import React, { useState } from 'react';
+import GitHubCard from './componentes/GitHubCard'; // Importe o componente GitHubCard
+import styled from 'styled-components';
+import { Alert, Button, CircularProgress } from '@mui/material';
 import axios from 'axios';
 
-const darkTheme = createTheme({
-  palette: {
-    mode: 'dark',
-    primary: {
-      main: '#002233',
-    },
-    secondary: {
-      main: '#FF5555',
-    },
-    background: {
-      default: '#000000',
-      paper: '#001122',
-    },
-  },
-});
-
-const lightTheme = createTheme({
-  palette: {
-    mode: 'light',
-    primary: {
-      main: '#800080',
-    },
-    secondary: {
-      main: '#FFC0CB',
-    },
-    background: {
-      default: '#FFFFFF',
-      paper: '#F0F0F0',
-    },
-  },
-});
-
-function App() {
-  const [userData, setUserData] = useState(null);
-  const [isDarkMode, setIsDarkMode] = useState(false);
+export default function App() {
   const [username, setUsername] = useState('');
+  const [userData, setUserData] = useState(null);
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
 
-  const toggleTheme = () => {
-    setIsDarkMode(!isDarkMode);
-  };
+  const fetchUserData = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
 
-  useEffect(() => {
-    if (username) {
-      fetchUserData(username);
-    }
-  }, [username]);
-
-  const fetchUserData = async (username) => {
     try {
       const response = await axios.get(`https://api.github.com/users/${username}`);
-      console.log("Dados do usuário:", response.data);
       setUserData(response.data);
-    } catch (error) {
-      console.error('Error fetching shared user data:', error);
+    } catch (err) {
+      if (axios.isAxiosError(err) && err.response?.status === 404) {
+        setError('Usuário não encontrado');
+      } else {
+        setError('Erro ao buscar dados do usuário');
+      }
+      setUserData(null);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <ThemeProvider theme={isDarkMode ? darkTheme : lightTheme}>
-      <CssBaseline />
-      <div className="min-h-screen flex flex-col items-center justify-center p-4">
-        <button
-          onClick={toggleTheme}
-          className="mb-4 px-4 py-2 rounded bg-gray-200 dark:bg-gray-700"
-        >
-          Toggle Theme
-        </button>
-        <UserProfileInput setUserData={setUserData} setUsername={setUsername} />
-        {userData && <GitHubCard userData={userData} />}
-      </div>
-    </ThemeProvider>
+    <Container>
+      <Input
+        type="text"
+        value={username}
+        onChange={(e) => setUsername(e.target.value)}
+        placeholder="Enter GitHub username"
+      />
+
+      <Button
+        onClick={fetchUserData}
+        type="submit"
+        variant="contained"
+        color="primary"
+        disabled={loading}
+      >
+        {loading ? <CircularProgress size={24} /> : 'Buscar perfil'}
+      </Button>
+
+      {error && (
+        <Alert severity="error" className="mt-2">
+          {error}
+        </Alert>
+      )}
+
+      {userData && (
+        <GitHubCard userData={userData} />
+      )}
+    </Container>
   );
 }
 
-export default App;
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  border: 2px solid white;
+  height: 100svh;
+  gap: 20px;
+  color: #FFFFFF;
+
+  @media screen and (min-width: 638px)
+  {
+    min-width: 60%;
+  }
+`
+
+const Input = styled.input`
+  padding: 5px;
+`
+
+const Card = styled.div`
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 20px;
+  margin-top: 20px;
+  text-align: center;
+`
+
+const Avatar = styled.img`
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+`
