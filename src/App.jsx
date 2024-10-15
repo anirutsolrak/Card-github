@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import GitHubCard from './componentes/GitHubCard'; // Importe o componente GitHubCard
 import styled from 'styled-components';
 import { Alert, Button, CircularProgress } from '@mui/material';
@@ -82,6 +82,7 @@ const Input = styled.input`
   padding: 5px;
 `
 
+/*
 const Card = styled.div`
   border: 1px solid #ccc;
   border-radius: 5px;
@@ -94,4 +95,4 @@ const Avatar = styled.img`
   width: 100px;
   height: 100px;
   border-radius: 50%;
-`
+` */

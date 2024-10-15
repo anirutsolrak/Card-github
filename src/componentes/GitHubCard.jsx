@@ -29,36 +29,23 @@ import axios from 'axios';
 import html2canvas from 'html2canvas';
 import { saveAs } from 'file-saver';
 import styled from 'styled-components';
+import {CardFrontRight, CardFrontLeft} from '../styles/CardFrontStyled'
 
 // Estilos styled-components
-const Container = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 20px;
-  border: 2px solid white;
-  height: 100svh;
-  gap: 20px;
-  color: #FFFFFF;
-
-  @media screen and (min-width: 638px) {
-    min-width: 60%;
-  }
-`;
-
-const Input = styled.input`
-  padding: 5px;
-`;
-
-const StyledCard = styled(Card)`
+const StyledCard = styled.div`
   border: 1px solid #ccc;
-  border-radius: 5px;
-  padding: 20px;
+  border-radius: 20px;
   margin-top: 20px;
-  text-align: center;
+  padding: 25px;
+  gap: 5px;
+  background: #2c3e50;
+  display: flex;
+  min-width: 500px;
+  max-width: 550px;
+  min-height: 290px;
 `;
 
-const StyledAvatar = styled(Avatar)`
+const StyledAvatar = styled.img`
   width: 100px;
   height: 100px;
   border-radius: 50%;
@@ -165,6 +152,63 @@ const GitHubCard = ({ userData }) => {
   return (
     <div className="relative">
       <div className="cursor-pointer" onClick={() => setFlipped((state) => !state)}>
+        <div
+          ref={cardRef}
+          style={{
+            transform: flipped ? 'rotateY(0deg)' : 'rotateY(0deg)',
+            transformOrigin: '50% 50%',
+          }}
+          className="w-96 h-[400px] relative transition-transform duration-500 ease-in-out"
+        >
+          <StyledCard>
+            {flipped ? (
+              <div>
+                <h6>Verso do card</h6>
+              </div>
+            ) : (
+              <>
+                <CardFrontRight>
+                  <StyledAvatar src={userData.avatar_url} alt={userData.name}/>
+                      <h2>{userData.name || ''}</h2>
+                      <h3>
+                        <a
+                          href={userData.html_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          >
+                          {userData.login}
+                        </a>{' '}
+                      </h3>
+                      {userData.bio && (
+                        <span>
+                          {userData.bio}
+                        </span>
+                          
+                      )}
+                </CardFrontRight>
+
+                <CardFrontLeft>
+                  <p>Followers: {userData.followers}</p>
+                  <p>Following: {userData.following}</p>
+                  <EmailIcon fontSize="small" className="mr-2" />
+                  email: {userData.email}
+                  <LocationOnIcon fontSize="small" className="mr-2" />
+                  {userData.location}
+                </CardFrontLeft>
+              </>
+            )}
+          </StyledCard>
+        </div>
+      </div>
+
+    
+    
+    
+    
+    
+    
+    {/*
+      <div className="cursor-pointer" onClick={() => setFlipped((state) => !state)}>
         <animated.div
           ref={cardRef}
           style={{
@@ -175,7 +219,7 @@ const GitHubCard = ({ userData }) => {
         >
           <StyledCard className="w-full h-full">
             <CardContent className="flex flex-col p-4">
-              {/* Conteúdo que será renderizado no verso */}
+              {/* Conteúdo que será renderizado no verso *//*}
               {flipped ? (
                 <div>
                   <Typography variant="h6">Verso do Cartão</Typography>
@@ -344,6 +388,8 @@ const GitHubCard = ({ userData }) => {
           </StyledCard>
         </animated.div>
       </div>
+      */}
+
       <div className="flex gap-2 mt-4">
         <Button
           variant="contained"
